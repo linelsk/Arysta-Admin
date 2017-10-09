@@ -1,0 +1,130 @@
+﻿
+<div ng-cloak class="container margin-bottom">
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+
+      <md-tab label="Slider">
+        <md-content class="md-padding">
+          <div style="text-align:left">
+            <div class="row">
+              <div class="col-xs-12">
+                <h4>Imagenes en slider:</h4><small>Para ver el detalle de cada imagen, da click sobre ella.</small>
+              </div>
+              <div style="text-align:left">
+                <div class="col-xs-12 col-lg-2 text-center margin-bottom" ng-repeat="img in slider_img">
+                  <div style="width:100%; height:100px">
+                    <a href ui-sref="detalle({id: {{img.id}}})" target="_blank">
+                      <img class="img-responsive" width="150" height="150" src="{{API_PATH_MEDIA}}{{img.image}}">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-lg-4 margin-bottom">
+            <h4>Agregar nuevo slider</h4>
+            <img class="img-responsive" width="250" height="250" ng-src="{{ image_source_slider }}" />
+            <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setFileSlider(this)" accept="image/*" />
+            <br />
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <h4>Texto en slider:</h4>
+            <textarea rows="4" aria-label="textomensaje" class="form-control" required md-no-asterisk name="textomensaje" ng-model="home.textomensaje" placeholder="Texto en slider"></textarea>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <h4>Texto en botón:</h4>
+            <input aria-label="mensaje_boton" class="form-control" required md-no-asterisk name="mensaje_boton" ng-model="home.mensaje_boton" placeholder="Texto en boton">
+          </div>
+          <div class="col-xs-12 text-right">
+            <button type="submit" ng-click="guardarSlider();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+
+        </md-content>
+      </md-tab>
+      <md-tab label="Sección azul">
+        <md-content class="md-padding">
+          <div style="text-align:left">
+            <div class="col-xs-12 col-lg-6 margin-bottom">
+              <h4>Imagen</h4>
+              <img class="img-responsive margin-bottom" width="250" height="250" ng-src="{{azul.image}}" />
+              <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setSeccionAzul(this)" accept="image/*" />
+              <br />
+            </div>
+            <div class="col-xs-12 col-lg-6 margin-bottom">
+              <h4>Texto:</h4>
+              <textarea rows="4" aria-label="textomensaje" class="form-control" required md-no-asterisk name="textomensaje" ng-model="azul.textomensaje" placeholder="Texto en slider"></textarea>
+            </div>
+            <div class="col-xs-12 text-right">
+              <button type="submit" ng-click="guardarSeccionAzul();" class="btn btn-primary btn-lg">
+                Guardar
+              </button>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>
+      <md-tab label="Sección Video">
+        <md-content class="md-padding">
+          <div class="col-xs-12 margin-bottom">
+            <h4>Url de video:</h4>
+            <input aria-label="video_url" class="form-control" required md-no-asterisk name="video_url" ng-model="video.video_url" placeholder="URL">
+          </div>
+          <div class="col-xs-12 text-right">
+            <button type="submit" ng-click="guardarUrlVideo();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+        </md-content>
+      </md-tab>
+      <md-tab label="Sección Distribuidor">
+        <md-content class="md-padding">
+
+          <div class="col-xs-12 col-lg-4">
+            <img class="img-responsive margin-bottom" width="250" height="250" ng-src="{{distribuidor.image}}">
+            <input type="file" class="file-input" ng-model="vm.image" onChange="angular.element(this).scope().setFilesDistribuidor(this)" accept="image/*" />
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <h4>Texto:</h4>
+            <textarea rows="4" aria-label="textomensaje" class="form-control" required md-no-asterisk name="textomensaje" ng-model="distribuidor.textomensaje" placeholder="Texto en slider"></textarea>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <h4>Botón:</h4>
+            <input aria-label="mensaje_boton" class="form-control" required md-no-asterisk name="mensaje_boton" ng-model="distribuidor.mensaje_boton" placeholder="Texto en boton">
+          </div>
+          <div class="margin-bottom"></div>
+          <div class="col-sm-12 text-right margin-bottom">
+            
+            <button type="submit" ng-click="uploadImagesDistribuidor();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+
+        </md-content>
+      </md-tab>
+      <md-tab label="Sección Contacto">
+        <md-content class="md-padding">
+          <div class="col-xs-12 col-lg-4">
+            <img class="img-responsive margin-bottom" width="250" height="250" ng-src="{{contactos.image}}">
+            <input type="file" class="file-input" ng-model="vm.image" onChange="angular.element(this).scope().setFilescontactos(this)" accept="image/*" />
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <h4>Texto:</h4>
+            <textarea rows="4" aria-label="textomensaje" class="form-control" required md-no-asterisk name="textomensaje" ng-model="contactos.textomensaje" placeholder="Texto en slider"></textarea>
+          </div>
+          <div class="col-xs-12 col-lg-4">
+            <h4>Botón:</h4>
+            <input aria-label="mensaje_boton" class="form-control" required md-no-asterisk name="mensaje_boton" ng-model="contactos.mensaje_boton" placeholder="Texto en boton">
+          </div>
+          <div class="margin-bottom"></div>
+          <div class="col-sm-12 text-right margin-bottom">
+
+            <button type="submit" ng-click="uploadImagesContactos();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>

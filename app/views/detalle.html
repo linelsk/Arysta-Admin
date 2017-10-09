@@ -1,0 +1,26 @@
+﻿<div class="container text-left">
+  <div class="col-xs-12 col-lg-4">
+    <img class="img-responsive" width="250" height="250" ng-src="{{slider.image}}">
+    <h4>Cambiar imagen</h4>
+    <input type="file" ng-model="vm.image" onChange="angular.element(this).scope().setFileslider(this)" accept="image/*" />
+    <!--<img class="img-responsive" ng-src="{{ image_source_slider }}" />-->
+  </div>
+
+  <div class="col-xs-12 col-lg-4">
+    <h4>Texto:</h4>
+    <textarea rows="4" aria-label="textomensaje" class="form-control" required md-no-asterisk name="textomensaje" ng-model="slider.textomensaje" placeholder="Texto en slider"></textarea>  
+  </div>
+  <div class="col-xs-12 col-lg-4">
+    <h4>Botón:</h4>
+    <input aria-label="mensaje_boton" class="form-control" required md-no-asterisk name="mensaje_boton" ng-model="slider.mensaje_boton" placeholder="Texto en boton">
+  </div>
+  <div class="margin-bottom"></div>
+  <div class="col-sm-12 text-right margin-bottom">
+    <button type="submit" ng-click="deleteImageslider();" class="btn btn-primary btn-lg" style="background-color:#ff0000; border-color: #ff0000;">
+      Eliminar
+    </button>
+    <button type="submit" ng-click="uploadImageslider();" class="btn btn-primary btn-lg">
+      Editar
+    </button>
+  </div>
+</div>

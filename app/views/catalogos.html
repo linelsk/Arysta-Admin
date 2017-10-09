@@ -1,0 +1,147 @@
+﻿<style>
+  table, th, td {
+    /*border: 1px solid grey;*/
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+    table tr:nth-child(odd) {
+      background-color: #f1f1f1;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+</style>
+<div ng-cloak class="container margin-bottom">
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Países">
+        <md-content class="md-padding">
+          <div class="col-xs-12">
+            <div style="text-align:left">
+              <div class="row">
+                <div class="col-xs-12 text-right">
+                  <button type="submit" ng-click="nuevopais();" class="btn btn-primary btn-md">
+                    Agregar país
+                  </button>
+                </div>
+                <div class="col-xs-12" ng-if="!nuevo">
+                  <h4>Países:</h4>
+                </div>
+                <div class="col-xs-12 margin-bottom" ng-if="!nuevo">
+                  <table>
+                    <tr ng-repeat="x in pais">
+                      <td>{{ x.nombre_ar }}</td>
+                      <td>{{x.abreviacion}}</td>
+                      <td>
+                        <button type="submit" ng-click="editarpais(x.id);" class="btn-editar btn-xs">
+                          Editar
+                        </button>
+                        <button type="submit" ng-click="eliminarpais($event, x.id);" class="btn-eliminar btn-xs">
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="row" ng-if="nuevo">
+                  <div class="col-xs-12">
+                    <div class="col-xs-12">
+                      <h4>País:</h4>
+                    </div>
+                    <div class="col-xs-12 margin-bottom">
+                      <div class="col-xs-12 col-lg-3">
+                        <input type="text" aria-label="nombre_us" class="form-control" required md-no-asterisk name="nombre_us" ng-model="pais.nombre_us" placeholder="País US" />
+                      </div>
+                      <div class="col-xs-12 col-lg-3">
+                        <input type="text" aria-label="nombre_us" class="form-control" required md-no-asterisk name="nombre_us" ng-model="pais.nombre_ar" placeholder="País AR" />
+                      </div>
+                      <div class="col-xs-12 col-lg-3 margin-bottom">
+                        <input type="text" aria-label="nombre_us" class="form-control" required md-no-asterisk name="nombre_us" ng-model="pais.nombre_br" placeholder="País BR" />
+                      </div>
+                      <div class="col-xs-12 col-lg-3 margin-bottom">
+                        <input type="text" aria-label="abreviacion" class="form-control" required md-no-asterisk name="abreviacion" ng-model="pais.abreviacion" placeholder="Abreviación" />
+                      </div>
+                    </div>
+                    <div class="col-xs-12 text-right">
+                      <div class="col-xs-12">
+                        <button type="submit" ng-click="guardarValores();" class="btn btn-primary btn-lg" ng-if="nuevoboton">
+                          Guardar
+                        </button>
+                        <button type="submit" ng-click="EditarValores();" class="btn btn-primary btn-lg" ng-if="!nuevoboton">
+                          Editar
+                        </button>
+                      </div>
+                    </div>
+                  </div>                  
+                </div>                
+              </div>
+            </div>
+          </div>          
+        </md-content>
+      </md-tab>
+      <md-tab label="Cultivos">
+        <md-content class="md-padding">
+          <div class="col-xs-12">
+            <div style="text-align:left">
+              <div class="row">
+                <div class="col-xs-12 text-right">
+                  <button type="submit" ng-click="nuevocultivo();" class="btn btn-primary btn-md">
+                    Agregar cultivo
+                  </button>
+                </div>
+                <div class="col-xs-12" ng-if="!nuevocultivo_v">
+                  <h4>Cultivos:</h4>
+                </div>
+                <div class="col-xs-12 margin-bottom" ng-if="!nuevocultivo_v">
+                  <table>
+                    <tr ng-repeat="x in cultivo">
+                      <td>{{ x.nombre_ar }}</td>
+                      <td>
+                        <button type="submit" ng-click="editarcultivo(x.id);" class="btn-editar btn-xs">
+                          Editar
+                        </button>
+                        <button type="submit" ng-click="eliminarcultivo($event, x.id);" class="btn-eliminar btn-xs">
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="row" ng-if="nuevocultivo_v">
+                  <div class="col-xs-12">
+                    <div class="col-xs-12">
+                      <h4>Cultivo:</h4>
+                    </div>
+                    <div class="col-xs-12 margin-bottom">
+                      <div class="col-xs-12 col-lg-4">
+                        <input type="text" aria-label="nombre_us" class="form-control" required md-no-asterisk name="nombre_us" ng-model="cultivo.nombre_us" placeholder="Cultivo US" />
+                      </div>
+                      <div class="col-xs-12 col-lg-4">
+                        <input type="text" aria-label="nombre_us" class="form-control" required md-no-asterisk name="nombre_us" ng-model="cultivo.nombre_ar" placeholder="Cultivo AR" />
+                      </div>
+                      <div class="col-xs-12 col-lg-4 margin-bottom">
+                        <input type="text" aria-label="nombre_us" class="form-control" required md-no-asterisk name="nombre_us" ng-model="cultivo.nombre_br" placeholder="Cultivo BR" />
+                      </div>
+                    </div>
+                    <div class="col-xs-12 text-right">
+                      <div class="col-xs-12">
+                        <button type="submit" ng-click="guardarValorescultivo();" class="btn btn-primary btn-lg" ng-if="nuevobotoncultivo">
+                          Guardar
+                        </button>
+                        <button type="submit" ng-click="EditarValorescultivo();" class="btn btn-primary btn-lg" ng-if="!nuevobotoncultivo">
+                          Editar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
+</div>

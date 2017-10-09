@@ -1,0 +1,234 @@
+﻿<style>
+  table, th, td {
+    /*border: 1px solid grey;*/
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+    table tr:nth-child(odd) {
+      background-color: #f1f1f1;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+
+</style>
+<div ng-cloak class="container margin-bottom">
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Banner producto">
+        <md-content class="md-padding">
+
+          <div class="col-xs-12 col-lg-6">
+            <img class="img-responsive" width="150" height="150" ng-src="{{slider_productos.image}}">
+            <h4>Cambiar imagen</h4>
+            <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setFilesSliderProductos(this)" accept="image/*" />
+          </div>
+          <div class="col-xs-12 col-lg-6 margin-bottom">
+            <h4>Texto en banner:</h4>
+            <textarea rows="4" aria-label="textomensaje" class="form-control" required md-no-asterisk name="textomensaje" ng-model="slider_productos.textomensaje" placeholder="Texto en banner"></textarea>
+          </div>
+          <div class="col-sm-12 text-right margin-bottom">
+            <button type="submit" ng-click="guardarsliderproductos();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+
+        </md-content>
+      </md-tab>
+      <md-tab label="Cargar productos">
+        <md-content class="md-padding">
+          <div class="col-xs-12 col-lg-12" style="padding-left:0;" ng-if="!nuevo">
+            <div class="col-xs-12 col-lg-6">
+
+            </div>
+
+            <div class="col-xs-12 col-lg-6 text-right">
+              <button type="submit" ng-click="nuevopais();" class="btn btn-primary btn-md">
+                Agregar producto
+              </button>
+            </div>
+          </div>
+          <div class="col-xs-12 margin-bottom" ng-if="!nuevo">
+            <div class="input-group col-lg-6">
+              <input type="text" class="form-control" ng-model="filtroNombre">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Buscar</button>
+              </span>
+            </div>
+            <br />
+            <h4>Productos:</h4>
+            <table width="100%">
+              <tr>
+                <td></td>
+                <td style="font-weight:bold">
+                  Producto
+                </td>
+                <td style="font-weight:bold">
+                  Definición
+                </td>
+                <td></td>
+              </tr>
+              <tr ng-repeat="x in producto | filter:{ nombre:filtroNombre }:false">
+                <td><img width="50" height="50" class="img-responsive" ng-src="{{API_PATH_MEDIA}}{{x.image}}" /></td>
+                <td>{{x.nombre}}</td>
+                <td>{{ x.definicion | limitTo:100}}<span ng-if="x.definicion.length > 100">...</span></td>
+                <td style="text-align:right">
+                  <button type="submit" ng-click="editarproducto(x.id);" class="btn-editar btn-xs">
+                    Editar
+                  </button>
+                  <button type="submit" ng-click="eliminarproducto($event, x.id);" class="btn-eliminar btn-xs">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-xs-12" ng-if="nuevo" style="padding:0;">
+            <div>
+              <h4>Nuevo producto:</h4>
+              <div class="col-xs-12">
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Nombre</h4>
+                  <input aria-label="nombre" class="form-control" required md-no-asterisk name="nombre" ng-model="producto.nombre" placeholder="nombre">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Definición</h4>
+                  <input aria-label="definicion" class="form-control" required md-no-asterisk name="definicion" ng-model="producto.definicion" placeholder="Definición">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Registro</h4>
+                  <input aria-label="registro" class="form-control" required md-no-asterisk name="registro" ng-model="producto.registro" placeholder="Registro">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Formulación</h4>
+                  <input aria-label="formulacion" class="form-control" required md-no-asterisk name="formulacion" ng-model="producto.formulacion" placeholder="Formulación">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Consentración</h4>
+                  <input aria-label="consentracion" class="form-control" required md-no-asterisk name="consentracion" ng-model="producto.consentracion" placeholder="Consentración">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Ingredientes</h4>
+                  <input aria-label="ingredientes" class="form-control" required md-no-asterisk name="ingredientes" ng-model="producto.ingredientes" placeholder="Ingredientes">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Envases</h4>
+                  <input aria-label="envases" class="form-control" required md-no-asterisk name="envases" ng-model="producto.envases" placeholder="Envases">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Toxitologia</h4>
+                  <input aria-label="toxitologia" class="form-control" required md-no-asterisk name="toxitologia" ng-model="producto.toxitologia" placeholder="Toxitologia">
+                </div>
+                <div class="col-xs-12 col-lg-4 margin-bottom" style="padding-left:0;">
+                  <h4>Expectro</h4>
+                  <input aria-label="expectro" class="form-control" required md-no-asterisk name="expectro" ng-model="producto.expectro" placeholder="Expectro">
+                </div>
+              </div>
+              <div class="col-xs-12 margin-bottom"><br /><md-divider></md-divider><br /></div>
+              <div class="col-xs-12">
+                <div class="col-xs-12 col-lg-4">
+                  <label for="sclients">Selecciona los cultivos correspondientes</label>
+                  <select class="form-control" size="5" multiple ng-model="availablecultivos" ng-options="client as client.cultivo for client in get_Cultivo"></select>
+                  <label for="sclients">Cultivos seleccionados</label>
+                  <select class="form-control" size="5" multiple ng-model="selected" ng-options="client as client.cultivo for client in selectedclients"></select>
+
+                  <input class="btn-editar btn-xs" id="moveright" type="button" value="Agregar cultivo" ng-click="moveItemcultivos(availablecultivos[0], get_Cultivo,selectedclients)" />
+                  <input class="btn-eliminar btn-xs btn-eliminar" id="move left" type="button" value="Quitar cultivo" ng-click="moveItemcultivos(selected[0], selectedclients,get_Cultivo)" />
+                </div>
+                <div class="col-xs-12 col-lg-4">
+                  <label for="sclients">Selecciona los categorias correspondientes</label>
+                  <select class="form-control" size="5" multiple ng-model="availablecategoria" ng-options="client as client.nombre for client in get_categoria"></select>
+                  <label for="sclients">Categoria seleccionados</label>
+                  <select class="form-control" size="5" multiple ng-model="selectedcategoria" ng-options="client as client.nombre for client in selectedclientscategoria"></select>
+
+                  <input class="btn-editar btn-xs" id="moveright" type="button" value="Agregar categoria" ng-click="moveItemcategoria(availablecategoria[0], get_categoria,selectedclientscategoria)" />
+                  <input class="btn-eliminar btn-xs btn-eliminar" id="move left" type="button" value="Quitar categoria" ng-click="moveItemcategoria(selectedcategoria[0], selectedclientscategoria,get_categoria)" />
+                </div>
+                <div class="col-xs-12 col-lg-4">
+                  <label for="sclients">Selecciona los subcategoria correspondientes</label>
+                  <select class="form-control" size="5" multiple ng-model="availablesubcategoria" ng-options="client as client.nombre for client in get_subcategoria"></select>
+                  <label for="sclients">Subcategoria seleccionados</label>
+                  <select class="form-control" size="5" multiple ng-model="selectedsubcategoria" ng-options="client as client.nombre for client in selectedclientssubcategoria"></select>
+
+                  <input class="btn-editar btn-xs" id="moveright" type="button" value="Agregar sub-categoria" ng-click="moveItemsubcategoria(availablesubcategoria[0], get_subcategoria,selectedclientssubcategoria)" />
+                  <input class="btn-eliminar btn-xs btn-eliminar" id="move left" type="button" value="Quitar sub-categoria" ng-click="moveItemsubcategoria(selectedsubcategoria[0], selectedclientssubcategoria,get_subcategoria)" />
+                </div>
+              </div>
+              <div class="col-xs-12 margin-bottom"><br /><br /><md-divider></md-divider><br /></div>
+              <div class="col-xs-12">
+                <div class="col-xs-12 col-lg-3">
+                  <p style="font-weight:bold">
+                    Imagen
+                  </p>
+                  <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setFile(this)" accept="image/*" />
+                  <div class="col-xs-12" style="padding: 0 0 10px 0">
+                    <br />
+                    <img class="img-responsive" width="250" height="250" ng-src="{{ image_source }}" />
+                  </div>
+                </div>
+                <div class="col-xs-12 col-lg-3">
+                  <p style="font-weight:bold">
+                    Etiqueta
+                  </p>
+                  <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setFileEtiqueta(this)" accept="pdf/*" />
+                  <div class="col-xs-12" style="padding: 0 0 10px 0">
+                    <br />
+                    <p ng-if="image_source_etiqueta != '' && Isview"><span>Etiqueta cargada correctamente</span></p>
+                    <p ng-if="image_source_etiqueta != '' && !Isview"><a href="{{API_PATH_MEDIA}}{{producto.etiqueta}}" target="_blank">Ver etiqueta</a></p>
+                    <!--<a href="{{ image_source_hoja }}" target="_blank" ng-if="image_source_hoja != ''">Hoja de seguridad actual</a>-->
+                    <!--<img class="img-responsive" width="250" height="250" ng-src="{{ image_source }}" />-->
+                  </div>
+                </div>
+                <div class="col-xs-12 col-lg-3">
+                  <p style="font-weight:bold">
+                    Hoja de seguridad
+                  </p>
+                  <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setFileHoja(this)" accept="pdf/*" />
+                  <div class="col-xs-12" style="padding: 0 0 10px 0">
+                    <br />
+                    <p ng-if="image_source_hoja != '' && Ishoja">Hoja cargada correctamente</p>
+                    <p ng-if="image_source_hoja != '' && !Ishoja"><a href="{{API_PATH_MEDIA}}{{producto.hoja}}" target="_blank">Ver hoja de seguridad</a></p>
+                    <!--<a href="{{ image_source_folleto }}" target="_blank">Folleto de producto actual</a>-->
+                    <!--<img class="img-responsive" width="250" height="250" ng-src="{{ image_source }}" />-->
+                  </div>
+                </div>
+                <div class="col-xs-12 col-lg-3">
+                  <p style="font-weight:bold">
+                    Ficha técnica
+                  </p>
+                  <input type="file" class="file-input-seleccionar" ng-model="vm.image" onChange="angular.element(this).scope().setFileFicha(this)" accept="pdf/*" />
+                  <div class="col-xs-12" style="padding: 0 0 10px 0">
+                    <br />
+                    <p ng-if="image_source_folleto != '' && Isficha"">Ficha cargada correctamente</p>
+                    <p ng-if="image_source_folleto != '' && !Isficha"><a href="{{API_PATH_MEDIA}}{{producto.ficha}}" target="_blank">Ver ficha técnica</a></p>
+                    <!--<a href="{{ image_source_folleto }}" target="_blank">Folleto de producto actual</a>-->
+                    <!--<img class="img-responsive" width="250" height="250" ng-src="{{ image_source }}" />-->
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xs-12" style="text-align:left">
+
+                <br />
+                <div class="col-sm-12 text-right margin-bottom">
+                  <button type="submit" ng-click="regresar();" class="btn btn-primary btn-lg" style="background-color:#FFBF00; border-color:#FFBF00;">
+                    Regresar
+                  </button>
+                  <button type="submit" ng-click="gurdarProducto();" class="btn btn-primary btn-lg" ng-if="nuevoboton">
+                    Guardar
+                  </button>
+                  <button type="submit" ng-click="editProducto();" class="btn btn-primary btn-lg" ng-if="!nuevoboton">
+                    Editar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>      
+    </md-tabs>
+  </md-content>
+</div>
+
