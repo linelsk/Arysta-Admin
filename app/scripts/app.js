@@ -86,8 +86,8 @@ angular
                     }
                 }
             })
-            .state('catalogos', {
-                url: '/catalogos',
+            .state('dondeestamos', {
+                url: '/dondeestamos',
                 templateUrl: 'views/catalogos.html',
                 controller: 'CatalogosCtrl',
                 data: {
@@ -109,7 +109,7 @@ angular
                 }
             })
             .state('ensayo', {
-                url: '/ensayo',
+                url: '/pronutiva',
                 templateUrl: 'views/ensayo.html',
                 controller: 'EnsayoCrtl',
                 data: {

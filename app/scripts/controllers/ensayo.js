@@ -8,120 +8,209 @@
  * Controller of the adminSomeonesomewhereApp
  */
 angular.module('spraytec-admin')
-    .controller('EnsayoCrtl', ['contenidoFactory', '$scope', 'API_PATH_MEDIA', '$mdDialog', function (contenidoFactory, $scope, API_PATH_MEDIA, $mdDialog) {
+    .controller('EnsayoCrtl', ['contenidoFactory', '$scope', 'API_PATH_MEDIA', '$mdDialog', '$window', function (contenidoFactory, $scope, API_PATH_MEDIA, $mdDialog, $window) {
 
         $scope.pais = [{}];
         $scope.nuevo = false;
-        $scope.id_ensayo = "";
-        $scope.ensayo = [{}];
+        $scope.id_producto = "";
+        $scope.cultivo = [{}];
         $scope.label_pais = [{}];
-        $scope.ids_pais = [];
+        $scope.ids_categoria = [];
         $scope.ids_cultivo = [];
-        $scope.ids_producto = [];
+        $scope.ids_subcategoria = [];
         $scope.API_PATH_MEDIA = API_PATH_MEDIA;
         $scope.selectedclients = [];
-        $scope.selectedclientscultivo = [];
-        $scope.selectedclientsproducto = [];
+        $scope.selectedclientscategoria = [];
+        $scope.selectedclientssubcategoria = [];
         $scope.image_source_temp = "";
+        $scope.image_source_temp_hoja = "";
+        $scope.image_source_temp_folleto = "";
+        $scope.hoja = "";
+        $scope.folleto = "";
 
-        contenidoFactory.ServiceContenido('catalogos/Ensayo/', 'GET', {
+        $scope.image_source_hoja = "";
+        $scope.image_source_folleto = "";
+        $scope.image_source_etiqueta = "";
+        $scope.image_testSliderProducto = "";
+        $scope.insertSliderPronutiva = false;
+        $scope.Isview = true;
+        $scope.Ishoja = true;
+        $scope.Isficha = true;
+        $scope.image_titulo_temp = "";
+        $scope.image_slider_temp = "";
 
-        }).then(function (data) {
+        $scope.slider_pronutiva = {
+            "image": "",
+            "textomensaje": "",
+            "texto_contenido": ""
+        };
 
-            $scope.ensayo = data.data;
+        //Slider Productos
+        contenidoFactory.ServiceContenido('manager/Pronutiva/', 'GET', {}).then(function (data) {
+            console.log(data.data);
+            if (data.data != "") {
+                $scope.insertSliderPronutiva = true;
+                $scope.slider_pronutiva.image_update = data.data[0].image;
+                $scope.slider_pronutiva.image_update_titulo = data.data[0].image_titulo;
+                $scope.slider_pronutiva = data.data[0];
+                $scope.slider_pronutiva.image = API_PATH_MEDIA + data.data[0].image;
+                $scope.slider_pronutiva.image_titulo = API_PATH_MEDIA + data.data[0].image_titulo;
+            }
+        });
+
+        $scope.setFilesSliderPronutiva = function (element) {
+            $scope.currentFile = element.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                $scope.slider_pronutiva.image = event.target.result;
+                $scope.image_slider_temp = event.target.result;
+
+                $scope.$apply();
+            }
+            // when the file is read it triggers the onload event above.
+            reader.readAsDataURL(element.files[0]);
+        }
+
+        $scope.setFilesSliderTituloPronutiva = function (element) {
+            $scope.currentFile = element.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (event) {
+                $scope.slider_pronutiva.image_titulo = event.target.result;
+                $scope.image_titulo_temp = event.target.result;
+
+                $scope.$apply();
+            }
+            // when the file is read it triggers the onload event above.
+            reader.readAsDataURL(element.files[0]);
+
+        }
+        $scope.guardarsliderpronutiva = function (ev) {
+            if ($scope.image_testSliderProducto != "" || $scope.slider_pronutiva.textomensaje != "") {
+                if ($scope.insertSliderPronutiva == false) {
+
+                    $scope.userExtencion = $scope.slider_pronutiva.image.split(',');
+                    $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+
+                    contenidoFactory.ServiceContenido('manager/SubirImagenSliderPronutiva/', 'PUT', {
+                        "image": $scope.slider_pronutiva.image.split(',')[1],
+                        "extension": $scope.tipoimg
+
+                    }).then(function (data) {
+
+                        $scope.userExtencion = $scope.slider_pronutiva.image_titulo.split(',');
+                        $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+
+                        contenidoFactory.ServiceContenido('manager/SubirImagenTituloPronutiva/', 'PUT', {
+                            "image": $scope.slider_pronutiva.image_titulo.split(',')[1],
+                            "extension": $scope.tipoimg
+
+                        }).then(function (tituto) {
+                            contenidoFactory.ServiceContenido('manager/Pronutiva/', 'POST', {
+                                "image": data.data.image + '.' + data.data.extension,
+                                "textomensaje": $scope.slider_pronutiva.textomensaje,
+                                "image_titulo": tituto.data.image + '.' + tituto.data.extension,
+                                "texto_contenido": $scope.slider_pronutiva.texto_contenido,
+                                "titulo": "",
+                                "status": true,
+                                "created_by": $window.localStorage.userid
+
+                            }).then(function (data) {
+                                //console.log(data);
+                                contenidoFactory.mensaje(ev, "Resgistro dado de alta correctamente");
+                            });
+                        });
+                    });
+                }
+                else {
+                    var _slider;
+                    var _titulo;
+
+                    if ($scope.image_slider_temp == "") {
+                        _slider = $scope.slider_pronutiva.image_update
+                    }
+                    else {
+
+                        $scope.userExtencion = $scope.image_slider_temp.split(',');
+                        $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+
+                        contenidoFactory.ServiceContenido('manager/SubirImagenSliderPronutiva/', 'PUT', {
+                            "image": $scope.image_slider_temp.split(',')[1],
+                            "extension": $scope.tipoimg
+
+                        }).then(function (data) {
+
+                        });
+                    }
+
+                    if ($scope.image_titulo_temp == "") {
+                        _titulo = $scope.slider_pronutiva.image_update_titulo
+                    }
+                    else {
+
+                        $scope.userExtencion = $scope.image_titulo_temp.split(',');
+                        $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+
+                        contenidoFactory.ServiceContenido('manager/SubirImagenTituloPronutiva/', 'PUT', {
+                            "image": $scope.image_titulo_temp.split(',')[1],
+                            "extension": $scope.tipoimg
+
+                        }).then(function (data) {
+
+                        });
+                    }
+
+                    contenidoFactory.ServiceContenido('manager/PronutivaUpdate/' + $scope.slider_pronutiva.id + '/', 'PUT', {
+                        "image": _slider,
+                        "textomensaje": $scope.slider_pronutiva.textomensaje,
+                        "image_titulo": _titulo,
+                        "texto_contenido": $scope.slider_pronutiva.texto_contenido,
+                        "titulo": "",
+                        "status": true,
+                        "created_by": $window.localStorage.userid
+
+                    }).then(function (data) {
+                        console.log(data);
+                        contenidoFactory.mensaje(ev, "Resgistro actualizado correctamente");
+                    });
+                }
+            }
+            else {
+                contenidoFactory.mensaje(ev, "Por lo menos un campo de texto debe ser llenado");
+            }
+        }
+
+        //Productos Catalogo
+        contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {}).then(function (data) {
+            console.log(data.data);
+            $scope.cultivo = data.data;
         });
 
         $scope.nuevopais = function () {
             $scope.nuevo = true;
-            $scope.pais = [{}];
+            $scope.cultivo = {};
             $scope.nuevoboton = true;
+            $scope.get_Cultivo = {};
+            $scope.get_categoria = {};
+            $scope.get_subcategoria = {};
+            $scope.selectedclients = [];
+            $scope.selectedclientscategoria = [];
+            $scope.selectedclientssubcategoria = [];
+            $scope.image_source = "";
+            $scope.image_source_etiqueta = "";
+            $scope.image_source_hoja = "";
+            $scope.image_source_folleto = "";
         }
 
         function removeItemFromArr(arr, item) {
             var i = arr.indexOf(item);
             arr.splice(i, 1);
+
+            //return arr;
         }
 
-        $scope.editarensayo = function (id) {
-            $scope.id_ensayo = id;
-            $scope.nuevo = true;
-            $scope.nuevoboton = false;
-            $scope.selectedclients = [];
-            $scope.selectedclientscultivo = [];
-            $scope.selectedclientsproducto = [];
-
-            contenidoFactory.ServiceContenido('catalogos/EnsayoUpdate/' + id + '/', 'GET', {
-
-            }).then(function (result) {
-                console.log(result.data);
-                $scope.ensayo = result.data;
-                $scope.image_source = API_PATH_MEDIA + '/' + result.data.file;
-                contenidoFactory.ServiceContenido('catalogos/Pais/', 'GET', {}).then(function (data) {
-                    //
-                    //$scope.get_pais = data.data;
-                    for (var j = 0; j < data.data.length; j++) {
-                        for (var i = 0; i < result.data.pais.length; i++) {
-                            if (result.data.pais[i] == data.data[j].id) {
-
-                                removeItemFromArr($scope.get_pais, data.data[j].nombre_ar);
-                                $scope.selectedclients.push(
-                                    {
-                                        id: data.data[j].id,
-                                        nombre_ar: data.data[j].nombre_ar
-                                    }
-                                );
-                            }
-                            //if (result.data.pais[i] != data.data[j].id) {
-                            //    console.log(data.data[j].nombre_ar);
-                            //}
-                        }
-                    }
-                });
-
-                contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {}).then(function (data) {
-
-                    //$scope.get_cultivo = data.data;
-                    for (var j = 0; j < data.data.length; j++) {
-                        for (var i = 0; i < result.data.cultivo.length; i++) {
-                            if (result.data.cultivo[i] == data.data[j].id) {
-
-                                removeItemFromArr($scope.get_cultivo, data.data[j].nombre_ar);
-                                $scope.selectedclientscultivo.push(
-                                    {
-                                        id: data.data[j].id,
-                                        nombre_ar: data.data[j].nombre_ar
-                                    }
-                                );
-                            }
-                            //if (result.data.pais[i] != data.data[j].id) {
-                            //    console.log(data.data[j].nombre_ar);
-                            //}
-                        }
-                    }
-                });
-
-                for (var j = 0; j < result.data.producto.length; j++) {
-                    
-                    for (var i = 0; i < $scope.get_producto.length; i++) {
-                        //console.log(result.data.producto[j] + "=" + $scope.get_producto[i].id + "iteracion-i:" + i + "iteracion-j:" + j);
-                        if (result.data.producto[j] == $scope.get_producto[i].id) {
-                            
-                            $scope.selectedclientsproducto.push(
-                                {
-                                    id: $scope.get_producto[i].id,
-                                    nombre: $scope.get_producto[i].nombre
-                                }
-                            );
-
-                            $scope.get_producto.splice(i, 1);
-                        }
-                    }
-                }
-
-            });
-        }
-
-        $scope.eliminarensayo = function (ev, id) {
+        $scope.eliminarcultivo = function (ev, id) {
             var confirm = $mdDialog.confirm({
                 targetEvent: ev,
                 template: '<md-dialog md-theme="{{ dialog.theme || dialog.defaultTheme }}" aria-label="{{ dialog.ariaLabel }}" ng-class="dialog.css">' +
@@ -135,13 +224,13 @@ angular.module('spraytec-admin')
                 '</md-dialog>'
             })
             $mdDialog.show(confirm).then(function () {
-                contenidoFactory.ServiceContenido('catalogos/EnsayoUpdate/' + id + '/', 'DELETE', {
+                contenidoFactory.ServiceContenido('catalogos/CultivoUpdate/' + id + '/', 'DELETE', {
 
                 }).then(function (data) {
-
-                    contenidoFactory.ServiceContenido('catalogos/Ensayo/', 'GET', {}).then(function (data) {
-
-                        $scope.ensayo = data.data;
+                    console.log(data.data);
+                    contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {}).then(function (data) {
+                        console.log(data.data);
+                        $scope.cultivo = data.data;
                     });
                 });
             });
@@ -161,54 +250,16 @@ angular.module('spraytec-admin')
             reader.readAsDataURL(element.files[0]);
         }
 
-        //Catalogos
-        contenidoFactory.ServiceContenido('catalogos/Pais/', 'GET', {
-        }).then(function (data) {
+        $scope.editarcultivo = function (id) {
+            $scope.nuevo = true;
+            $scope.nuevoboton = false;
 
-            $scope.get_pais = data.data;
-        });
+            contenidoFactory.ServiceContenido('catalogos/CultivoUpdate/' + id + '/', 'GET', {
 
-        contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {
-        }).then(function (data) {
-            console.log(data);
-            $scope.get_cultivo = data.data;
-        });
-
-        contenidoFactory.ServiceContenido('catalogos/Producto/', 'GET', {
-        }).then(function (data) {
-            console.log(data);
-            $scope.get_producto = data.data;
-        });
-
-        $scope.moveItem = function (item, from, to) {
-            //console.log(item);
-            $scope.ids_pais.push(item.id)
-            var idx = from.indexOf(item);
-            if (idx != -1) {
-                from.splice(idx, 1);
-                to.push(item);
-            }
-        };
-
-        $scope.moveItemcultivos = function (item, from, to) {
-
-            $scope.ids_cultivo.push(item.id)
-            var idx = from.indexOf(item);
-            if (idx != -1) {
-                from.splice(idx, 1);
-                to.push(item);
-            }
-            console.log($scope.ids_cultivo);
-        };
-
-        $scope.moveItemproductos = function (item, from, to) {
-            //console.log("OK");
-            $scope.ids_producto.push(item.id)
-            var idx = from.indexOf(item);
-            if (idx != -1) {
-                from.splice(idx, 1);
-                to.push(item);
-            }
+            }).then(function (result) {
+                $scope.cultivo = result.data;
+                $scope.image_source = API_PATH_MEDIA + '/' + result.data.image;
+            });
         }
 
         function guid() {
@@ -222,88 +273,61 @@ angular.module('spraytec-admin')
                 .substring(1);
         }
 
-        $scope.gurdarEnsayo = function (ev) {
-            //console.log($scope.image_source);
+        $scope.gurdarcultivo = function (ev) {
+            //console.log(guid());
             if ($scope.image_source == undefined) {
-                contenidoFactory.mensaje(ev, "Falta archivo del ensayo");
+                contenidoFactory.mensaje(ev, "Falta imagen de cultivo");
             }
             else {
-                console.log($scope.image_source);
                 $scope.userExtencion = $scope.image_source.split(',');
                 $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
-                //if ($scope.tipoimg == "msword") {
-                //    $scope.tipoimg = "docx";                //}
 
-                contenidoFactory.ServiceContenido('catalogos/FileEnsayo/', 'PUT', {
-                    "file": $scope.image_source.split(',')[1],
+                contenidoFactory.ServiceContenido('catalogos/SubirImagenCultivo/', 'PUT', {
+                    "image": $scope.image_source.split(',')[1],
                     "extension": $scope.tipoimg,
                     "filename": guid()
+
+                }).then(function (data) {
+
+                    contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'POST', {
+                        "image": data.data.image + '.' + data.data.extension,
+                        "nombre": $scope.cultivo.nombre,
+                        "definicion": $scope.cultivo.definicion,
+                        "registro": $scope.cultivo.registro,
+                        "cultivo": $scope.cultivo.cultivo,
+                        "created_by": $window.localStorage.userid,
+
+                    }).then(function (data) {
+                        console.log(data);
+                        contenidoFactory.mensaje(ev, "Registro agregado correctamente");
+                        $scope.nuevo = false;
+                        contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {}).then(function (data) {
+                            $scope.cultivo = data.data;
+                        });
+                    });
+                });
+            }
+        }
+
+        $scope.editcultivo = function (ev) {
+            if ($scope.image_source_temp == "") {
+
+                contenidoFactory.ServiceContenido('catalogos/CultivoUpdate/' + $scope.cultivo.id + '/', 'PUT', {
+                    "image": $scope.cultivo.image,
+                    "nombre": $scope.cultivo.nombre,
+                    "definicion": $scope.cultivo.definicion,
+                    "registro": $scope.cultivo.registro,
+                    "cultivo": $scope.cultivo.cultivo,
+                    "created_by": $window.localStorage.userid
 
                 }).then(function (data) {
                     console.log(data);
-                    contenidoFactory.ServiceContenido('catalogos/Ensayo/', 'POST', {
-                        "file": data.data.file + '.' + data.data.extension,
-                        "codigo": $scope.ensayo.codigo,
-                        "nombre": $scope.ensayo.nombre,
-                        "pais": $scope.ids_pais,
-                        "cultivo": $scope.ids_cultivo,
-                        "producto": $scope.ids_producto,
-                        "created_by": 1
+                    contenidoFactory.mensaje(ev, "Registro agregado correctamente");
+                    $scope.nuevo = false;
+                    contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {
 
                     }).then(function (data) {
-                        console.log(data);
-                        contenidoFactory.mensaje(ev, "Registro agregado correctamente");
-                        $scope.nuevo = false;
-                        contenidoFactory.ServiceContenido('catalogos/Ensayo/', 'GET', {
-
-                        }).then(function (data) {
-
-                            $scope.ensayo = data.data;
-                        });
-                    });
-                });
-            }
-        }
-
-        $scope.editEnsayo = function (ev) {
-            if ($scope.image_source_temp == "") {
-                //console.log($scope.selectedclients);
-                //console.log($scope.selectedclientscultivo);
-                $scope.ids_pais = [];
-                $scope.ids_cultivo = [];
-                $scope.ids_producto = [];
-                for (var i = 0; i < $scope.selectedclients.length; i++) {
-                    $scope.ids_pais.push($scope.selectedclients[i].id);
-                }
-
-                for (var i = 0; i < $scope.selectedclientscultivo.length; i++) {
-                    $scope.ids_cultivo.push($scope.selectedclientscultivo[i].id);
-                }
-                for (var i = 0; i < $scope.selectedclientsproducto.length; i++) {
-                    $scope.ids_producto.push($scope.selectedclientsproducto[i].id);
-                }
-                
-                contenidoFactory.ServiceContenido('catalogos/EnsayoUpdate/' + $scope.id_ensayo + '/', 'GET', {}).then(function (data) {
-                    contenidoFactory.ServiceContenido('catalogos/EnsayoUpdate/' + $scope.id_ensayo + '/', 'PUT', {
-                        "file": data.data.image,
-                        "codigo": $scope.ensayo.codigo,
-                        "nombre": $scope.ensayo.nombre,
-                        "pais": $scope.ids_pais,
-                        "cultivo": $scope.ids_cultivo,
-                        "producto": $scope.ids_producto,
-                        "created_by": 1
-
-                    }).then(function (data) {
-                        console.log(data);
-                        contenidoFactory.mensaje(ev, "Registro agregado correctamente");
-                        $scope.nuevo = false;
-                        contenidoFactory.ServiceContenido('catalogos/Ensayo/', 'GET', {
-
-                        }).then(function (data) {
-
-                            $scope.ensayo = data.data;
-                            //$scope.get_pais = $scope.get_pais;
-                        });
+                        $scope.cultivo = data.data;
                     });
                 });
             }
@@ -311,39 +335,42 @@ angular.module('spraytec-admin')
                 $scope.userExtencion = $scope.image_source.split(',');
                 $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
 
-                contenidoFactory.ServiceContenido('catalogos/FileEnsayo/', 'PUT', {
-                    "file": $scope.image_source.split(',')[1],
+                contenidoFactory.ServiceContenido('catalogos/SubirImagenCultivo/', 'PUT', {
+                    "image": $scope.image_source.split(',')[1],
                     "extension": $scope.tipoimg,
                     "filename": guid()
 
                 }).then(function (data) {
 
-                    contenidoFactory.ServiceContenido('catalogos/EnsayoUpdate/' + $scope.id_ensayo + '/', 'PUT', {
-                        "file": data.data.file + '.' + data.data.extension,
-                        "codigo": $scope.ensayo.codigo,
-                        "nombre": $scope.ensayo.nombre,
-                        "pais": $scope.ids_pais,
-                        "cultivo": $scope.ids_cultivo,
-                        "producto": $scope.ids_producto,
-                        "created_by": 1
+                    contenidoFactory.ServiceContenido('catalogos/CultivoUpdate/' + $scope.cultivo.id + '/', 'PUT', {
+                        "image": data.data.image + '.' + data.data.extension,
+                        "nombre": $scope.cultivo.nombre,
+                        "definicion": $scope.cultivo.definicion,
+                        "registro": $scope.cultivo.registro,
+                        "cultivo": $scope.cultivo.cultivo,
+                        "created_by": $window.localStorage.userid,
 
-                    }).then(function (data) {
-                        console.log(data);
-                        contenidoFactory.mensaje(ev, "Registro agregado correctamente");
+                    }).then(function (result) {
+                        console.log(result);
+                        contenidoFactory.mensaje(ev, "Registro actualizado correctamente");
                         $scope.nuevo = false;
-                        contenidoFactory.ServiceContenido('catalogos/Ensayo/', 'GET', {
-
-                        }).then(function (data) {
-
-                            $scope.ensayo = data.data;
+                        contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {}).then(function (data) {
+                            $scope.cultivo = result.data;
                         });
                     });
                 });
             }
-        }
+        }    
 
         $scope.regresar = function () {
             $scope.nuevo = false;
+            contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {
+
+            }).then(function (data) {
+                //console.log(data.data);
+                $scope.cultivo = data.data;
+                //$scope.get_pais = $scope.get_pais;
+            });
         }
     }]);
 

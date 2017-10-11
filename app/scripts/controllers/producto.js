@@ -22,6 +22,7 @@ angular.module('spraytec-admin')
         $scope.selectedclientscategoria = [];
         $scope.selectedclientssubcategoria = [];
         $scope.image_source_temp = "";
+        $scope.image_source_temp_etiqueta = "";
         $scope.image_source_temp_hoja = "";
         $scope.image_source_temp_folleto = "";
         $scope.hoja = "";
@@ -141,6 +142,22 @@ angular.module('spraytec-admin')
         });
 
         $scope.nuevopais = function () {
+            //Catalogos
+            contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {
+            }).then(function (data) {
+                $scope.get_Cultivo = data.data;
+            });
+
+            contenidoFactory.ServiceContenido('catalogos/Categoria/', 'GET', {
+            }).then(function (data) {
+                $scope.get_categoria = data.data;
+            });
+
+            contenidoFactory.ServiceContenido('catalogos/SubCategoria/', 'GET', {
+            }).then(function (data) {
+                $scope.get_subcategoria = data.data;
+            });
+
             $scope.nuevo = true;
             $scope.producto = {};
             $scope.nuevoboton = true;
@@ -248,25 +265,9 @@ angular.module('spraytec-admin')
             reader.readAsDataURL(element.files[0]);
         }
 
-        //Catalogos
-        contenidoFactory.ServiceContenido('catalogos/Cultivo/', 'GET', {
-        }).then(function (data) {
-            $scope.get_Cultivo = data.data;
-        });
-
-        contenidoFactory.ServiceContenido('catalogos/Categoria/', 'GET', {
-        }).then(function (data) {
-            $scope.get_categoria = data.data;
-        });
-
-        contenidoFactory.ServiceContenido('catalogos/SubCategoria/', 'GET', {
-        }).then(function (data) {
-            $scope.get_subcategoria = data.data;
-        });
-
         $scope.moveItemcultivos = function (item, from, to) {
-            console.log(item);
-            $scope.ids_cultivo.push(item.id)
+            //console.log(item);
+            //$scope.ids_cultivo.push(item.id)
             var idx = from.indexOf(item);
             if (idx != -1) {
                 from.splice(idx, 1);
@@ -276,8 +277,8 @@ angular.module('spraytec-admin')
         };
 
         $scope.moveItemcategoria = function (item, from, to) {
-            console.log(item);
-            $scope.ids_categoria.push(item.id)
+            //console.log(item);
+            //$scope.ids_categoria.push(item.id)
             var idx = from.indexOf(item);
             if (idx != -1) {
                 from.splice(idx, 1);
@@ -287,8 +288,8 @@ angular.module('spraytec-admin')
         };
 
         $scope.moveItemsubcategoria = function (item, from, to) {
-            console.log(item);
-            $scope.ids_subcategoria.push(item.id)
+            //console.log(item);
+            //$scope.ids_subcategoria.push(item.id)
             var idx = from.indexOf(item);
             if (idx != -1) {
                 from.splice(idx, 1);
@@ -317,7 +318,7 @@ angular.module('spraytec-admin')
             contenidoFactory.ServiceContenido('catalogos/SubCategoria/', 'GET', {
             }).then(function (data) {
                 $scope.get_subcategoria = data.data;
-                });
+            });
 
             contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + id + '/', 'GET', {
 
@@ -332,6 +333,11 @@ angular.module('spraytec-admin')
                 $scope.Ishoja = false;
                 $scope.Isficha = false;
 
+                //for (var z = 0; z < $scope.producto.cultivos.length; z++) {
+                //    console.log($scope.producto.cultivos);
+                //    $scope.ids_cultivo.push($scope.producto.cultivos[z]);
+                //}
+
                 for (var i = 0; i < $scope.get_Cultivo.length; i++) {
                     for (var j = 0; j < result.data.cultivos.length; j++) {
                         if ($scope.get_Cultivo[i].id == result.data.cultivos[j]) {
@@ -341,7 +347,7 @@ angular.module('spraytec-admin')
                                     cultivo: $scope.get_Cultivo[i].cultivo
                                 }
                             );
-                            $scope.get_Cultivo.splice(i, 1);                            
+                            $scope.get_Cultivo.splice(i, 1);
                             break;
                         }
                     }
@@ -391,7 +397,19 @@ angular.module('spraytec-admin')
         }
 
         $scope.gurdarProducto = function (ev) {
-            //console.log(guid());
+
+            for (var z = 0; z < $scope.selectedclients.length; z++) {
+                $scope.ids_cultivo.push($scope.selectedclients[z].id);
+            }
+
+            for (var z = 0; z < $scope.selectedclientscategoria.length; z++) {
+                $scope.ids_categoria.push($scope.selectedclientscategoria[z].id);
+            }
+
+            for (var z = 0; z < $scope.selectedclientssubcategoria.length; z++) {
+                $scope.ids_subcategoria.push($scope.selectedclientssubcategoria[z].id);
+            }
+
             if ($scope.image_source == undefined) {
                 contenidoFactory.mensaje(ev, "Falta imagen del producto");
             }
@@ -489,158 +507,135 @@ angular.module('spraytec-admin')
         }
 
         $scope.editProducto = function (ev) {
-            if ($scope.image_source_temp == "" && $scope.image_source_temp_hoja == "" && $scope.image_source_temp_folleto == "") {
-                //console.log($scope.selectedclients);
-                //console.log($scope.selectedclientscultivo);
-                $scope.ids_categoria = [];
-                $scope.ids_cultivo = [];
-                for (var i = 0; i < $scope.selectedclients.length; i++) {
-                    $scope.ids_categoria.push($scope.selectedclients[i].id);
-                }
 
-                for (var i = 0; i < $scope.selectedclientscultivo.length; i++) {
-                    $scope.ids_cultivo.push($scope.selectedclientscultivo[i].id);
-                }
-                console.log($scope.ids_categoria);
-                console.log($scope.ids_cultivo);
-                contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + $scope.id_producto + '/', 'GET', {}).then(function (data) {
-                    contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + $scope.id_producto + '/', 'PUT', {
-                        "image": data.data.image,
-                        "codigo": $scope.producto.codigo,
-                        "nombre": $scope.producto.nombre,
-                        "pais": $scope.ids_categoria,
-                        "cultivo": $scope.ids_cultivo,
-                        "presentacion": $scope.producto.presentacion,
-                        "hojaseguridad": $scope.producto.hojaseguridad,
-                        "folletoproducto": $scope.producto.folletoproducto,
-                        "created_by": 1
+            $scope.ids_cultivo = [];
+            $scope.ids_categoria = [];
+            $scope.ids_subcategoria = [];
+            var _image;
+            var _etiqueta;
+            var _hoja;
+            var _ficha;
 
-                    }).then(function (data) {
-                        console.log(data);
-                        contenidoFactory.mensaje(ev, "Registro agregado correctamente");
-                        $scope.nuevo = false;
-                        contenidoFactory.ServiceContenido('catalogos/Producto/', 'GET', {
+            for (var z = 0; z < $scope.selectedclients.length; z++) {
+                $scope.ids_cultivo.push($scope.selectedclients[z].id);
+            }
 
-                        }).then(function (data) {
-                            console.log(data.data);
-                            $scope.producto = data.data;
-                            //$scope.get_pais = $scope.get_pais;
-                        });
-                    });
+            for (var z = 0; z < $scope.selectedclientscategoria.length; z++) {
+                $scope.ids_categoria.push($scope.selectedclientscategoria[z].id);
+            }
+
+            for (var z = 0; z < $scope.selectedclientssubcategoria.length; z++) {
+                $scope.ids_subcategoria.push($scope.selectedclientssubcategoria[z].id);
+            }
+
+            if ($scope.image_source_temp == "") {
+                $scope._image = $scope.producto.image
+            }
+            else {
+                $scope.userExtencion = $scope.image_source.split(',');
+                $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+                $scope.filename = guid();
+                _image = 'productos/' + $scope.filename + '.' + $scope.tipoimg;
+
+                contenidoFactory.ServiceContenido('catalogos/SubirImagenProductos/', 'PUT', {
+                    "image": $scope.image_source.split(',')[1],
+                    "extension": $scope.tipoimg,
+                    "filename": $scope.filename
+
+                }).then(function (data) {
+
                 });
+            }
+
+            if ($scope.image_source_temp_etiqueta == "") {
+                _etiqueta = $scope.producto.etiqueta
             }
             else {
 
-                if ($scope.image_source_temp != "") {
-                    $scope.userExtencion = $scope.image_source.split(',');
-                    $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+                $scope.userExtencion = $scope.image_source_temp_etiqueta.split(',');
+                $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+                $scope.filename = guid()
+                _etiqueta = 'achivos_producto/' + $scope.filename + '.' + $scope.tipoimg;
 
-                    contenidoFactory.ServiceContenido('catalogos/ImagenProducto/', 'PUT', {
-                        "image": $scope.image_source.split(',')[1],
-                        "extension": $scope.tipoimg,
-                        "filename": guid()
+                contenidoFactory.ServiceContenido('catalogos/SubirArchivoProductos/', 'PUT', {
+                    "file": $scope.image_source_temp_etiqueta.split(',')[1],
+                    "extension": $scope.tipoimg,
+                    "filename": $scope.filename
 
-                    }).then(function (data) {
+                }).then(function (data) {
 
-                        contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + $scope.id_producto + '/', 'PUT', {
-                            "image": data.data.image + '.' + data.data.extension,
-                            "codigo": $scope.producto.codigo,
-                            "nombre": $scope.producto.nombre,
-                            "pais": $scope.ids_categoria,
-                            "cultivo": $scope.ids_cultivo,
-                            "presentacion": $scope.producto.presentacion,
-                            "hojaseguridad": $scope.producto.hojaseguridad,
-                            "folletoproducto": $scope.producto.folletoproducto,
-                            "created_by": 1
-
-                        }).then(function (data) {
-                            console.log(data);
-                            contenidoFactory.mensaje(ev, "Registro agregado correctamente");
-                            $scope.nuevo = false;
-                            contenidoFactory.ServiceContenido('catalogos/Producto/', 'GET', {
-
-                            }).then(function (data) {
-                                console.log(data.data);
-                                $scope.producto = data.data;
-                            });
-                        });
-                    });
-                }
-                else {
-                    if ($scope.image_source_temp_hoja != "") {
-                        $scope.userExtencion = $scope.image_source_hoja.split(',');
-                        $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
-
-                        contenidoFactory.ServiceContenido('catalogos/FileProductoHoja/', 'PUT', {
-                            "file": $scope.image_source_hoja.split(',')[1],
-                            "extension": $scope.tipoimg,
-                            "filename": guid()
-
-                        }).then(function (data) {
-
-                            contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + $scope.id_producto + '/', 'PUT', {
-                                "image": $scope.producto.image,
-                                "codigo": $scope.producto.codigo,
-                                "nombre": $scope.producto.nombre,
-                                "pais": $scope.ids_categoria,
-                                "cultivo": $scope.ids_cultivo,
-                                "presentacion": $scope.producto.presentacion,
-                                "hojaseguridad": data.data.file + '.' + data.data.extension,
-                                "folletoproducto": $scope.producto.folletoproducto,
-                                "created_by": 1
-
-                            }).then(function (data) {
-                                console.log(data);
-                                contenidoFactory.mensaje(ev, "Registro agregado correctamente");
-                                $scope.nuevo = false;
-                                contenidoFactory.ServiceContenido('catalogos/Producto/', 'GET', {
-
-                                }).then(function (data) {
-                                    console.log(data.data);
-                                    $scope.producto = data.data;
-                                });
-                            });
-                        });
-                    }
-                    else {
-                        if ($scope.image_source_temp_folleto != "") {
-                            $scope.userExtencion = $scope.image_source_folleto.split(',');
-                            $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
-
-                            contenidoFactory.ServiceContenido('catalogos/FileProductoFolleto/', 'PUT', {
-                                "file": $scope.image_source_folleto.split(',')[1],
-                                "extension": $scope.tipoimg,
-                                "filename": guid()
-
-                            }).then(function (data) {
-
-                                contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + $scope.id_producto + '/', 'PUT', {
-                                    "image": $scope.producto.image,
-                                    "codigo": $scope.producto.codigo,
-                                    "nombre": $scope.producto.nombre,
-                                    "pais": $scope.ids_categoria,
-                                    "cultivo": $scope.ids_cultivo,
-                                    "presentacion": $scope.producto.presentacion,
-                                    "hojaseguridad": $scope.producto.hojaseguridad,
-                                    "folletoproducto": data.data.file + '.' + data.data.extension,
-                                    "created_by": 1
-
-                                }).then(function (data) {
-                                    console.log(data);
-                                    contenidoFactory.mensaje(ev, "Registro agregado correctamente");
-                                    $scope.nuevo = false;
-                                    contenidoFactory.ServiceContenido('catalogos/Producto/', 'GET', {
-
-                                    }).then(function (data) {
-                                        console.log(data.data);
-                                        $scope.producto = data.data;
-                                    });
-                                });
-                            });
-                        }
-                    }
-                }
+                });
             }
+
+            if ($scope.image_source_temp_hoja == "") {
+                _hoja = $scope.producto.hoja
+            }
+            else {
+
+                $scope.userExtencion = $scope.image_source_temp_hoja.split(',');
+                $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+                $scope.filename = guid()
+                _hoja = 'achivos_producto/' + $scope.filename + '.' + $scope.tipoimg;
+
+                contenidoFactory.ServiceContenido('catalogos/SubirArchivoProductos/', 'PUT', {
+                    "file": $scope.image_source_temp_hoja.split(',')[1],
+                    "extension": $scope.tipoimg,
+                    "filename": $scope.filename
+
+                }).then(function (data) {
+
+                });
+            }
+
+            if ($scope.image_source_temp_folleto == "") {
+                _ficha = $scope.producto.ficha
+            }
+            else {
+
+                $scope.userExtencion = $scope.image_source_temp_folleto.split(',');
+                $scope.tipoimg = $scope.userExtencion[0].split('/')[1].split(';')[0];
+                $scope.filename = guid()
+                _ficha = 'achivos_producto/' + $scope.filename + '.' + $scope.tipoimg;
+
+                contenidoFactory.ServiceContenido('catalogos/SubirArchivoProductos/', 'PUT', {
+                    "file": $scope.image_source_temp_folleto.split(',')[1],
+                    "extension": $scope.tipoimg,
+                    "filename": $scope.filename
+
+                }).then(function (data) {
+
+                });
+            }
+
+            contenidoFactory.ServiceContenido('catalogos/ProductoUpdate/' + $scope.producto.id + '/', 'PUT', {
+                "image": _image,
+                "nombre": $scope.producto.nombre,
+                "definicion": $scope.producto.definicion,
+                "registro": $scope.producto.registro,
+                "formulacion": $scope.producto.formulacion,
+                "consentracion": $scope.producto.consentracion,
+                "ingredientes": $scope.producto.ingredientes,
+                "cultivos": $scope.ids_cultivo,
+                "envases": $scope.producto.envases,
+                "toxitologia": $scope.producto.toxitologia,
+                "expectro": $scope.producto.expectro,
+                "categoria": $scope.ids_categoria,
+                "subcategoria": $scope.ids_subcategoria,
+                "etiqueta": _etiqueta,
+                "hoja": _hoja,
+                "ficha": _ficha,
+                "created_by": $window.localStorage.userid
+
+            }).then(function (data) {
+                console.log(data);
+                contenidoFactory.mensaje(ev, "Registro actualizado correctamente");
+                $scope.nuevo = false;
+                contenidoFactory.ServiceContenido('catalogos/Producto/', 'GET', {
+
+                }).then(function (data) {
+                    $scope.producto = data.data;
+                });
+            });
         }
 
         $scope.regresar = function () {
