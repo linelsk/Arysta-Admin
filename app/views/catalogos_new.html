@@ -1,0 +1,94 @@
+﻿<style>
+  table, th, td {
+    /*border: 1px solid grey;*/
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+    table tr:nth-child(odd) {
+      background-color: #f1f1f1;
+    }
+
+    table tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+</style>
+<div ng-cloak class="container margin-bottom">
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Categoria">
+        <md-content class="md-padding">
+          <div class="col-xs-12" ng-if="!subcategoria">
+            <div class="col-xs-12 margin-bottom">
+              <h4>Categoria:</h4>
+              <input aria-label="nombre" class="form-control" required md-no-asterisk name="nombre" ng-model="categoria.nombre" placeholder="Categoria">
+            </div>
+            <div class="col-xs-12 col-lg-12 text-right margin-bottom">
+              <button type="submit" ng-click="gurdarCategoria();" class="btn btn-primary btn-lg">
+                Guardar
+              </button>
+            </div>
+            <div class="col-xs-12">
+              <table id="contcatos" class="table table-striped pvtTable">
+                <thead>
+                  <tr class='warning'>
+                    <th>Categoria</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="x in categoria">
+                    <td>{{x.nombre}}</td>
+                    <td class="text-right">
+                      <button type="submit" ng-click="eliminarCategoria($event, x.id);" class="btn-eliminar btn-xs">
+                        Eliminar
+                      </button>
+                      <button type="submit" ng-click="AgregarSubCategoria(x.id);" class="btn-editar btn-xs">
+                        Agregar sub-categoria
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-xs-12" ng-if="subcategoria">
+            <div class="col-xs-12 margin-bottom">
+              <h4>Sub-Categoria:</h4>
+              <input aria-label="nombre" class="form-control" required md-no-asterisk name="nombre" ng-model="subcategoria_adm.nombre" placeholder="Sub-Categoria">
+            </div>
+            <div class="col-xs-12 col-lg-12 text-right margin-bottom">
+              <button type="submit" ng-click="regresar();" class="btn btn-primary btn-lg" style="background-color:#FFBF00; border-color:#FFBF00;">
+                Regresar
+              </button>
+              <button type="submit" ng-click="gurdarSubCategoria();" class="btn btn-primary btn-lg">
+                Guardar
+              </button>
+            </div>
+            <div class="col-xs-12">
+              <table id="contcatos" class="table table-striped pvtTable">
+                <thead>
+                  <tr class='warning'>
+                    <th>Sub-Categoria</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="x in subcategoriaarr">
+                    <td>{{x.nombre}}</td>
+                    <td class="text-right">
+                      <button type="submit" ng-click="eliminarSubCategoria($event, x.id);" class="btn-eliminar btn-xs">
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>
+      
+    </md-tabs>
+  </md-content>
+</div>

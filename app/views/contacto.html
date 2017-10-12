@@ -13,72 +13,137 @@
       background-color: #ffffff;
     }
 </style>
-<div class="container">
-  <div class="col-xs-12">
-    <div class="input-group col-lg-6">
-      <input type="text" class="form-control" ng-model="filtroNombreProvincia">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button">Buscar</button>
-      </span>
-    </div>
-    <br />
-    <div class="col-lg-12" style="text-align:right; padding:0">
-      <a class="btn btn-primary btn-lg" href="#" onclick="$('.pvtTable').tableExport({type:'excel', excelstyles:['border-bottom', 'border-top', 'border-left', 'border-right']});">Exportar a Excel</a>
-    </div>
-    <table id="customers" class="table table-striped pvtTable">
-      <thead>
-        <tr class='warning'>
-          <th>Nombres</th>
-          <th>Correo electrónico</th>
-          <th>Asunto</th>
-          <th>Mensaje</th>
-          <th>Sección</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="x in contacto | filter:{ nombres:filtroNombreProvincia }:false">
-          <td>{{x.nombres}}</td>
-          <td>{{x.correo}}</td>
-          <td>{{x.asunto}}</td>
-          <td>{{x.mensaje}}</td>
-          <td>{{x.ishome}}</td>
-        </tr>
-      </tbody>
-    </table> 
+<div ng-cloak class="container margin-bottom">
+  <md-content>
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Sección Contacto">
+        <md-content class="md-padding">
 
-    
- 
-  </div>
+          <div class="col-xs-12 col-lg-12">
+            <h4>Imagen de contacto:</h4>
+            <img class="img-responsive margin-bottom" width="250" height="250" ng-src="{{img_source}}">
+            <input type="file" class="file-input" ng-model="vm.image" onChange="angular.element(this).scope().setFiles(this)" accept="image/*" />
+            <br />
+          </div>
+          <div  class="col-xs-12 col-lg-12 text-right margin-bottom">
+            <button type="submit" ng-click="gurdarImagenContacto();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+          <div class="col-xs-12 margin-bottom"><br /><md-divider></md-divider><br /></div>
+          <div class="col-xs-12">
+            <h4>Contactos de emergencia</h4>
+          </div>
+          <div class="col-xs-12 col-lg-6">
+            <h4>Nombre de contacto:</h4>
+            <input aria-label="nombre_contcato" class="form-control" required md-no-asterisk name="nombre_contcato" ng-model="contacto_adm.nombre_contcato" placeholder="Nombre de contacto">
+          </div>
+          <div class="col-xs-12 col-lg-6 margin-bottom">
+            <h4>Teléfono de contacto:</h4>
+            <input aria-label="telefono_contacto" class="form-control" required md-no-asterisk name="telefono_contacto" ng-model="contacto_adm.telefono_contacto" placeholder="Teléfono de contacto">
+          </div>
+          <div class="col-xs-12 col-lg-12 text-right margin-bottom">
+            <button type="submit" ng-click="gurdarContacto();" class="btn btn-primary btn-lg">
+              Guardar
+            </button>
+          </div>
+          <div class="col-xs-12">
+            <table id="contcatos" class="table table-striped pvtTable">
+              <thead>
+                <tr class='warning'>
+                  <th>Contacto</th>
+                  <th>Teléfono</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="x in contacto_adm">
+                  <td>{{x.nombre_contcato}}</td>
+                  <td>{{x.telefono_contacto}}</td>
+                  <td>
+                    <button type="submit" ng-click="eliminarContacto($event, x.id);" class="btn-eliminar btn-xs">
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </md-content>
+      </md-tab>
+      <md-tab label="Descarga de contactos">
+        <md-content class="md-padding">
+
+          <div class="col-xs-12">
+            <div class="input-group col-lg-6">
+              <input type="text" class="form-control" ng-model="filtroNombreProvincia">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button">Buscar</button>
+              </span>
+            </div>
+            <br />
+            <!--<div class="col-lg-12" style="text-align:right; padding:0">
+      <a class="btn btn-primary btn-lg" href="#" onclick="$('.pvtTable').tableExport({type:'excel', excelstyles:['border-bottom', 'border-top', 'border-left', 'border-right']});">Exportar a Excel</a>
+    </div>-->
+            <table id="customers" class="table table-striped pvtTable">
+              <thead>
+                <tr class='warning'>
+                  <th>Nombres</th>
+                  <th>Teléfono</th>
+                  <th>Correo electrónico</th>
+                  <th>Localidad</th>
+                  <th>Mensaje</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="x in contacto | filter:{ nombres:filtroNombreProvincia }:false">
+                  <td>{{x.nombres}}</td>
+                  <td>{{x.telefono}}</td>
+                  <td>{{x.correo}}</td>
+                  <td>{{x.localidad}}</td>
+                  <td>{{x.mensaje}}</td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          
+
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </md-content>
 </div>
+
 <script type="text/javascript">
-  
-  //$(document).ready(function () {
-  //  TableExport(document.getElementsByTagName("table"), {
-  //    headers: true,                              // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
-  //    footers: true,                              // (Boolean), display table footers (th or td elements) in the <tfoot>, (default: false)
-  //    formats: ['xls', 'csv', 'txt'],             // (String[]), filetype(s) for the export, (default: ['xls', 'csv', 'txt'])
-  //    filename: 'id',                             // (id, String), filename for the downloaded file, (default: 'id')
-  //    bootstrap: false,                           // (Boolean), style buttons using bootstrap, (default: true)
-  //    exportButtons: true,                        // (Boolean), automatically generate the built-in export buttons for each of the specified formats (default: true)
-  //    position: 'bottom',                         // (top, bottom), position of the caption element relative to table, (default: 'bottom')
-  //    ignoreRows: null,                           // (Number, Number[]), row indices to exclude from the exported file(s) (default: null)
-  //    ignoreCols: null,                           // (Number, Number[]), column indices to exclude from the exported file(s) (default: null)
-  //    trimWhitespace: true                        // (Boolean), remove all leading/trailing newlines, spaces, and tabs from cell text in the exported file(s) (default: false)
-  //  });
+
+  $(document).ready(function () {
+    //  TableExport(document.getElementsByTagName("table"), {
+    //    headers: true,                              // (Boolean), display table headers (th or td elements) in the <thead>, (default: true)
+    //    footers: true,                              // (Boolean), display table footers (th or td elements) in the <tfoot>, (default: false)
+    //    formats: ['xls', 'csv', 'txt'],             // (String[]), filetype(s) for the export, (default: ['xls', 'csv', 'txt'])
+    //    filename: 'id',                             // (id, String), filename for the downloaded file, (default: 'id')
+    //    bootstrap: false,                           // (Boolean), style buttons using bootstrap, (default: true)
+    //    exportButtons: true,                        // (Boolean), automatically generate the built-in export buttons for each of the specified formats (default: true)
+    //    position: 'bottom',                         // (top, bottom), position of the caption element relative to table, (default: 'bottom')
+    //    ignoreRows: null,                           // (Number, Number[]), row indices to exclude from the exported file(s) (default: null)
+    //    ignoreCols: null,                           // (Number, Number[]), column indices to exclude from the exported file(s) (default: null)
+    //    trimWhitespace: true                        // (Boolean), remove all leading/trailing newlines, spaces, and tabs from cell text in the exported file(s) (default: false)
+    //  });
     //$("#tblContactos").tableExport();
-  //  $("#customers").tableExport({
-		//    headings: true, // (Boolean), display table headings (th/td elements) in the <thead>
-		//    footers: true,  // (Boolean), display table footers (th/td elements) in the <tfoot>
-		//    formats: ["xlsx", "xls"],   // (String[]), filetypes for the export
-		//    fileName: "lista_contactos",    // (id, String), filename for the downloaded file
-		//    bootstrap: true,                   // (Boolean), style buttons using bootstrap
-		//    position: "top",                 // (top, bottom), position of the caption element relative to table
-		//    ignoreRows: null,                  // (Number, Number[]), row indices to exclude from the exported file(s)
-		//    ignoreCols: null, // (Number, Number[]), column indices to exclude from the exported file(s)
-		//    ignoreCSS: ".tableexport-ignore",  // (selector, selector[]), selector(s) to exclude from the exported file(s)
-		//    emptyCSS: ".tableexport-empty",    // (selector, selector[]), selector(s) to replace cells with an empty string in the exported file(s)
-		//    trimWhitespace: false
-		//});
-	});
+    $("#customers").tableExport({
+      headings: true, // (Boolean), display table headings (th/td elements) in the <thead>
+      footers: true,  // (Boolean), display table footers (th/td elements) in the <tfoot>
+      formats: ["xlsx", "xls"],   // (String[]), filetypes for the export
+      fileName: "lista_contactos",    // (id, String), filename for the downloaded file
+      bootstrap: true,                   // (Boolean), style buttons using bootstrap
+      position: "top",                 // (top, bottom), position of the caption element relative to table
+      ignoreRows: null,                  // (Number, Number[]), row indices to exclude from the exported file(s)
+      ignoreCols: null, // (Number, Number[]), column indices to exclude from the exported file(s)
+      ignoreCSS: ".tableexport-ignore",  // (selector, selector[]), selector(s) to exclude from the exported file(s)
+      emptyCSS: ".tableexport-empty",    // (selector, selector[]), selector(s) to replace cells with an empty string in the exported file(s)
+      trimWhitespace: false
+    });
+  });
 
 </script>

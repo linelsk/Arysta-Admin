@@ -239,4 +239,5 @@ angular.module('spraytec-admin')
                 //$scope.get_pais = $scope.get_pais;
             });
         }
+
     }]);

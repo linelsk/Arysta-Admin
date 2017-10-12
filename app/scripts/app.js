@@ -75,10 +75,10 @@ angular
                     }
                 }
             })
-            .state('detalle', {
-                url: '/detalle/:id',
-                templateUrl: 'views/detalle.html',
-                controller: 'DetalleCtrl',
+            .state('catalogos', {
+                url: '/catalogos',
+                templateUrl: 'views/catalogos_new.html',
+                controller: 'Catalogos_newCtrl',
                 data: {
                     permissions: {
                         only: ['ADMINISTRADOR'],
